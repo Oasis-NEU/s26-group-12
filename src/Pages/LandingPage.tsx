@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { searchBarStyles } from "./Presets/SearchBar";
+import { searchBarStyles } from "../Presets/SearchBar";
 
-function App() {
+function LandingPage() {
   const [clubNameSearchValue, setClubNameSearchValue] =
     useState<string>();
 
@@ -121,4 +121,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingPage;
