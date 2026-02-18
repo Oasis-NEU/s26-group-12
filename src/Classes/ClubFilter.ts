@@ -15,3 +15,10 @@ export type ClubFilter = {
   "Meeting Days"?: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | null;
   "# of Ratings"?: "5+" | "15+" | "50+" | null;
 };
+
+export const emptyClubFilter: ClubFilter = {
+  "Average Rating": null,
+  "Club Category": null,
+  "Meeting Days": null,
+  "# of Ratings": null
+}

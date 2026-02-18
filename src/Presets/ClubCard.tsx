@@ -2,6 +2,7 @@ import type { Club, meetDay } from "../Classes/Club";
 
 interface ClubCardProps {
   club: Club;
+  onSelectClub: (club: Club) => void;
 }
 
 function getDaysMeetText(day_list: meetDay[]): string {
@@ -45,7 +46,7 @@ function getRatingColor(rating: number): string {
   }
 }
 
-export default function ClubCard({ club }: ClubCardProps) {
+export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
   return (
     <button
       style={{
@@ -54,8 +55,7 @@ export default function ClubCard({ club }: ClubCardProps) {
         cursor: "pointer",
         width: "100%",
       }}
-      onClick={() => {
-      }}
+      onClick={() => {onSelectClub(club)}}
     >
       <div
         style={{

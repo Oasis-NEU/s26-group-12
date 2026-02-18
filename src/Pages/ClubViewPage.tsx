@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Club, meetDay } from "../Classes/Club";
 import type { ClubFilter } from "../Classes/ClubFilter";
 import { defaultClubs } from "../Classes/Club";
+import { emptyClubFilter } from "../Classes/ClubFilter";
 import ClubCard from "../Presets/ClubCard";
 import ClubSearchFilters from "../Presets/ClubFilter";
 
-function ClubViewPage() {
+type Props = {
+  onSelectClub: (club: Club) => void;
+  onSetActiveSearchString: (searchString: string) => void;
+  activeSearchString: string
+};
+
+export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, activeSearchString }: Props) {
   const [clubsTable, setClubsTable] = useState<Club[]>(defaultClubs);
   const [clubsShown, setClubsShown] = useState<Club[]>(defaultClubs);
+  const [activeClubFilter, setActiveClubFilter] =
+    useState<ClubFilter>(emptyClubFilter);
   const [filteringClubs, setFilteringClubs] = useState<boolean>(false);
 
-  const handleClubFilterChange = (filters: ClubFilter) => {
-    let end_club_list: Club[] = [...clubsTable];
+  useEffect(() => {
+    if (activeSearchString) {
+      handleClubSearchFilterChange();
+    }
+  }, [activeSearchString]);
+
+  const filterClubs = (end_club_list: Club[], filters: ClubFilter) => {
+    if (filters === null) {
+      return end_club_list;
+    }
+
     if (filters?.["Average Rating"]) {
       const [min] = filters["Average Rating"].split(" - ").map(Number);
       end_club_list = end_club_list.filter(
@@ -37,6 +55,33 @@ function ClubViewPage() {
         (club) => club.number_of_ratings >= min,
       );
     }
+    return end_club_list;
+  };
+
+  const searchClubs = (end_club_list: Club[], filterText: string) => {
+    if (filterText === "" || filterText === null) {
+      return end_club_list;
+    }
+    end_club_list = end_club_list.filter(
+      (club) =>
+        club.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        club.club_description.toLowerCase().includes(filterText.toLowerCase()),
+    );
+    return end_club_list;
+  };
+
+  const handleClubSearchFilterChange = () => {
+    let end_club_list: Club[] = [...clubsTable];
+    end_club_list = filterClubs(end_club_list, activeClubFilter);
+    end_club_list = searchClubs(end_club_list, activeSearchString);
+    setClubsShown(end_club_list);
+  };
+
+  const handleClubFilterChange = (filters: ClubFilter) => {
+    let end_club_list: Club[] = [...clubsTable];
+    end_club_list = filterClubs(end_club_list, filters);
+    end_club_list = searchClubs(end_club_list, activeSearchString);
+    setActiveClubFilter(filters);
     setClubsShown(end_club_list);
   };
 
@@ -85,6 +130,8 @@ function ClubViewPage() {
           <input
             type="text"
             placeholder="Club name"
+            value={activeSearchString}
+            onChange={(e) => onSetActiveSearchString(e.target.value)}
             style={{
               width: "100%",
               height: "38px",
@@ -109,9 +156,10 @@ function ClubViewPage() {
               cursor: "pointer",
               padding: 0,
               display: "flex",
-              fontSize:"1.7rem",
+              fontSize: "1.7rem",
               alignItems: "center",
             }}
+            onClick={() => handleClubSearchFilterChange()}
           >
             🔍
           </button>
@@ -201,12 +249,38 @@ function ClubViewPage() {
           height: "calc(100vh - 80px)",
         }}
       >
-        {clubsShown.map((clubObject) => (
-          <ClubCard key={clubObject.club_id} club={clubObject} />
-        ))}
+        {clubsShown.length > 0 &&
+          clubsShown.map((clubObject) => (
+            <ClubCard key={clubObject.club_id} club={clubObject} onSelectClub={(club) => onSelectClub(club)} />
+          ))}
+        {clubsShown.length === 0 && (
+          <div style={{ padding: "32px 24px", marginLeft:"20rem" }}>
+            <p
+              style={{
+                fontSize: "1.8rem",
+                fontWeight: "400",
+                color: "#000000",
+                margin: "0 0 20px 0",
+                lineHeight: "1.4",
+                fontFamily: "-apple-system",
+              }}
+            >
+              There are no clubs that match your requirements.
+            </p>
+            <p
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "400",
+                color: "#333333",
+                margin: 0,
+                fontFamily: "-apple-system"
+              }}
+            >
+              Try an alternate spelling or broaden your search
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-export default ClubViewPage;

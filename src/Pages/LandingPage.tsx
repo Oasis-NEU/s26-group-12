@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { searchBarStyles } from "../Presets/SearchBar";
 
-function LandingPage() {
-  const [clubNameSearchValue, setClubNameSearchValue] =
-    useState<string>();
+type Props = {
+  onSearchClub: (searchString: string) => void;
+};
+
+export default function LandingPage({ onSearchClub }: Props) {
+  const [clubNameSearchValue, setClubNameSearchValue] = useState<string>("");
 
   return (
     <div style={{ backgroundColor: "#ffffff", width: "100%", height: "100%" }}>
@@ -88,31 +91,34 @@ function LandingPage() {
               ...searchBarStyles.searchContainer,
               margin: "0 auto",
               marginBottom: "1rem",
-            }} // ------ Search Bar
+              position: "relative", 
+            }}
           >
             <input
               type="text"
               value={clubNameSearchValue}
+              onChange={(e) => setClubNameSearchValue(e.target.value)}
               placeholder={"Type here..."}
               style={searchBarStyles.searchInput}
             />
             <button
               style={{
                 position: "absolute",
-                top: "31.5%",
+                top: "50%",
+                right: "-2.3rem", 
                 transform: "translateY(-50%)",
-                background: "#ffffff01",
-                right:"28.8%",
-                borderRadius:"50%",
-                border:"0px",
-                padding:"0.25rem 0.25rem"
+                background: "transparent",
+                borderRadius: "50%",
+                border: "none",
+                padding: "0.25rem",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                fontSize:"2.1rem"
               }}
+              onClick={() => onSearchClub(clubNameSearchValue)}
             >
-              <img
-                src="src/Images/SearchVector.png"
-                alt=""
-                style={{ maxWidth: "2.7rem" }}
-              />
+              🔍
             </button>
           </div>
         </div>
@@ -120,5 +126,3 @@ function LandingPage() {
     </div>
   );
 }
-
-export default LandingPage;
