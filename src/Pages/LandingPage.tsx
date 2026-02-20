@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { searchBarStyles } from "../Presets/SearchBar";
+import { clubAPI } from "../api/client";
 
 type Props = {
   onSearchClub: (searchString: string) => void;
@@ -7,6 +8,26 @@ type Props = {
 
 export default function LandingPage({ onSearchClub }: Props) {
   const [clubNameSearchValue, setClubNameSearchValue] = useState<string>("");
+  const [searching, setSearching] = useState<boolean>(false);
+
+  const handleSearch = async () => {
+    if (clubNameSearchValue.trim() === "") {
+      onSearchClub("");
+      return;
+    }
+
+    try {
+      setSearching(true);
+      // Perform search via backend API
+      const results = await clubAPI.searchClubs(clubNameSearchValue);
+      console.log("Search results:", results);
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
+      setSearching(false);
+      onSearchClub(clubNameSearchValue);
+    }
+  };
 
   return (
     <div style={{ backgroundColor: "#ffffff", width: "100%", height: "100%" }}>
@@ -116,9 +137,10 @@ export default function LandingPage({ onSearchClub }: Props) {
                 alignItems: "center",
                 fontSize:"2.1rem"
               }}
-              onClick={() => onSearchClub(clubNameSearchValue)}
+              onClick={handleSearch}
+              disabled={searching}
             >
-              🔍
+              {searching ? "⏳" : "🔍"}
             </button>
           </div>
         </div>

@@ -10,18 +10,19 @@ export type ClubCategory =
   | "Gaming & Esports"
   | "Health & Wellness"
   | "Social"
+  | "Academic"
   | "Other";
 
-export type meetDay = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday"
+export type meetDay = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday"
 
 export type Club = {
     name: string,
     number_of_ratings: number,
     average_rating: number,
     club_id: number,
-    club_category: ClubCategory,
-    club_description: string,
-    days_meet: meetDay[]
+    category: ClubCategory,
+    description: string,
+    days_meet: string[]
 }
 
 export const defaultClubs: Club[] = [

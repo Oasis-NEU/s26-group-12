@@ -138,7 +138,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "0.5rem",
             }}
           >
-            {club.club_category.toUpperCase()}
+            {club.category.toUpperCase()}
           </div>
           <div
             style={{
@@ -148,7 +148,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "1.5rem",
             }}
           >
-            {club.club_description}
+            {club.description}
           </div>
 
           <div
@@ -159,7 +159,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "1.5rem",
             }}
           >
-            {getDaysMeetText(club.days_meet)}
+            {getDaysMeetText(club.days_meet as meetDay[])}
           </div>
 
         </div>
