@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import type { Club, meetDay } from "../Classes/Club";
 import type { ClubFilter } from "../Classes/ClubFilter";
-import { defaultClubs } from "../Classes/Club";
 import { emptyClubFilter } from "../Classes/ClubFilter";
 import ClubCard from "../Presets/ClubCard";
 import ClubSearchFilters from "../Presets/ClubFilter";
+import { clubAPI } from "../api/client";
 
 type Props = {
   onSelectClub: (club: Club) => void;
@@ -13,12 +13,34 @@ type Props = {
 };
 
 export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, activeSearchString }: Props) {
-  const [clubsTable, setClubsTable] = useState<Club[]>(defaultClubs);
-  const [clubsShown, setClubsShown] = useState<Club[]>(defaultClubs);
+  const [clubsTable, setClubsTable] = useState<Club[]>([]);
+  const [clubsShown, setClubsShown] = useState<Club[]>([]);
   const [activeClubFilter, setActiveClubFilter] =
     useState<ClubFilter>(emptyClubFilter);
   const [filteringClubs, setFilteringClubs] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch clubs from backend on mount
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        setLoading(true);
+        const clubs = await clubAPI.getAllClubs();
+        setClubsTable(clubs);
+        setClubsShown(clubs);
+      } catch (err) {
+        setError("Failed to load clubs. Please try again.");
+        console.error("Error fetching clubs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClubs();
+  }, []);
+
+  // Handle search or filter changes
   useEffect(() => {
     if (activeSearchString) {
       handleClubSearchFilterChange();
@@ -39,7 +61,7 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
 
     if (filters?.["Club Category"]) {
       end_club_list = end_club_list.filter(
-        (club) => club.club_category === filters["Club Category"],
+        (club) => club.category === filters["Club Category"],
       );
     }
 
@@ -58,14 +80,14 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
     return end_club_list;
   };
 
-  const searchClubs = (end_club_list: Club[], filterText: string) => {
+  const searchClubsLocal = (end_club_list: Club[], filterText: string) => {
     if (filterText === "" || filterText === null) {
       return end_club_list;
     }
     end_club_list = end_club_list.filter(
       (club) =>
         club.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        club.club_description.toLowerCase().includes(filterText.toLowerCase()),
+        club.description.toLowerCase().includes(filterText.toLowerCase()),
     );
     return end_club_list;
   };
@@ -73,14 +95,14 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
   const handleClubSearchFilterChange = () => {
     let end_club_list: Club[] = [...clubsTable];
     end_club_list = filterClubs(end_club_list, activeClubFilter);
-    end_club_list = searchClubs(end_club_list, activeSearchString);
+    end_club_list = searchClubsLocal(end_club_list, activeSearchString);
     setClubsShown(end_club_list);
   };
 
   const handleClubFilterChange = (filters: ClubFilter) => {
     let end_club_list: Club[] = [...clubsTable];
     end_club_list = filterClubs(end_club_list, filters);
-    end_club_list = searchClubs(end_club_list, activeSearchString);
+    end_club_list = searchClubsLocal(end_club_list, activeSearchString);
     setActiveClubFilter(filters);
     setClubsShown(end_club_list);
   };
@@ -249,11 +271,27 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
           height: "calc(100vh - 80px)",
         }}
       >
-        {clubsShown.length > 0 &&
+        {loading && (
+          <div style={{ padding: "32px 24px", marginLeft:"20rem" }}>
+            <p style={{ fontSize: "1.8rem", fontWeight: "400", color: "#000000" }}>
+              Loading clubs...
+            </p>
+          </div>
+        )}
+        
+        {error && (
+          <div style={{ padding: "32px 24px", marginLeft:"20rem" }}>
+            <p style={{ fontSize: "1.8rem", fontWeight: "400", color: "#cc0000" }}>
+              {error}
+            </p>
+          </div>
+        )}
+        
+        {!loading && clubsShown.length > 0 &&
           clubsShown.map((clubObject) => (
             <ClubCard key={clubObject.club_id} club={clubObject} onSelectClub={(club) => onSelectClub(club)} />
           ))}
-        {clubsShown.length === 0 && (
+        {!loading && clubsShown.length === 0 && (
           <div style={{ padding: "32px 24px", marginLeft:"20rem" }}>
             <p
               style={{
