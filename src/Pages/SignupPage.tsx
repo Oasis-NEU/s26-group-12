@@ -38,154 +38,211 @@ export default function SignupPage({ onNavigateHome, onNavigateLogin }: Props) {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#f6f6f6",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "440px",
-          backgroundColor: "#ffffff",
-          borderRadius: "16px",
-          padding: "2rem",
-          boxShadow: "0 24px 60px rgba(0, 0, 0, 0.12)",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-          <button
-            onClick={onNavigateHome}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "#111111",
-              fontSize: "0.95rem",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            Back to Home
-          </button>
-          <button
-            onClick={onNavigateLogin}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "#111111",
-              fontSize: "0.95rem",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            Log in
-          </button>
+    <>
+      <style>{`
+        .signup-page {
+          min-height: 100vh;
+          min-height: 100dvh;
+          background-color: #f6f6f6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1.5rem;
+          box-sizing: border-box;
+          font-family: "-apple-system";
+        }
+
+        .signup-card {
+          width: 100%;
+          max-width: 27.5rem;
+          background-color: #ffffff;
+          border-radius: 1rem;
+          padding: clamp(1.25rem, 5vw, 2rem);
+          box-shadow: 0 1.5rem 3.75rem rgba(0, 0, 0, 0.12);
+          box-sizing: border-box;
+        }
+
+        .signup-nav {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .signup-nav-btn {
+          background: transparent;
+          border: none;
+          color: #111111;
+          font-size: 0.95rem;
+          cursor: pointer;
+          padding: 0;
+          line-height: 1.5;
+        }
+
+        .signup-nav-btn:hover {
+          text-decoration: underline;
+        }
+
+        .signup-title {
+          font-size: clamp(1.4rem, 4vw, 1.8rem);
+          margin: 0 0 0.5rem 0;
+        }
+
+        .signup-subtitle {
+          margin: 0 0 1.5rem 0;
+          color: #555555;
+          font-size: clamp(0.875rem, 2.5vw, 1rem);
+        }
+
+        .signup-label {
+          display: block;
+          margin-bottom: 0.75rem;
+        }
+
+        .signup-label-text {
+          display: block;
+          margin-bottom: 0.35rem;
+          color: #333333;
+          font-size: 0.9rem;
+        }
+
+        .signup-input {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border-radius: 0.625rem;
+          border: 1px solid #dddddd;
+          font-size: 1rem;
+          box-sizing: border-box;
+          -webkit-appearance: none;
+        }
+
+        .signup-input:focus {
+          outline: 2px solid #111111;
+          outline-offset: 1px;
+          border-color: transparent;
+        }
+
+        .signup-checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+          font-size: 0.95rem;
+          cursor: pointer;
+        }
+
+        .signup-checkbox-label input[type="checkbox"] {
+          width: 1rem;
+          height: 1rem;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+
+        .signup-error {
+          color: #b00020;
+          margin-bottom: 0.75rem;
+          font-size: 0.9rem;
+        }
+
+        .signup-success {
+          color: #0a7b45;
+          margin-bottom: 0.75rem;
+          font-size: 0.9rem;
+        }
+
+        .signup-submit {
+          width: 100%;
+          padding: 0.85rem;
+          border-radius: 999px;
+          border: none;
+          background-color: #111111;
+          color: #ffffff;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          touch-action: manipulation;
+        }
+
+        .signup-submit:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .signup-submit:not(:disabled):hover {
+          background-color: #333333;
+        }
+      `}</style>
+
+      <div className="signup-page">
+        <div className="signup-card">
+          <div className="signup-nav">
+            <button onClick={onNavigateHome} className="signup-nav-btn">
+              Back to Home
+            </button>
+            <button onClick={onNavigateLogin} className="signup-nav-btn">
+              Log in
+            </button>
+          </div>
+
+          <h1 className="signup-title">Create account</h1>
+          <p className="signup-subtitle">Join the community and share reviews.</p>
+
+          <form onSubmit={handleSubmit}>
+            <label className="signup-label">
+              <span className="signup-label-text">Email</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="name@northeastern.edu"
+                className="signup-input"
+                autoComplete="email"
+              />
+            </label>
+
+            <label className="signup-label">
+              <span className="signup-label-text">Username</span>
+              <input
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="yourusername"
+                className="signup-input"
+                autoComplete="username"
+              />
+            </label>
+
+            <label className="signup-label">
+              <span className="signup-label-text">Password</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="********"
+                className="signup-input"
+                autoComplete="new-password"
+              />
+            </label>
+
+            <label className="signup-checkbox-label">
+              <input
+                type="checkbox"
+                checked={isStudent}
+                onChange={(event) => setIsStudent(event.target.checked)}
+              />
+              Northeastern student
+            </label>
+
+            {error && <div className="signup-error">{error}</div>}
+            {success && <div className="signup-success">{success}</div>}
+
+            <button type="submit" disabled={loading} className="signup-submit">
+              {loading ? "Creating account..." : "Create account"}
+            </button>
+          </form>
         </div>
-
-        <h1 style={{ fontSize: "1.8rem", margin: 0, marginBottom: "0.5rem" }}>
-          Create account
-        </h1>
-        <p style={{ margin: 0, color: "#555555", marginBottom: "1.5rem" }}>
-          Join the community and share reviews.
-        </p>
-
-        <form onSubmit={handleSubmit}>
-          <label style={{ display: "block", marginBottom: "0.75rem" }}>
-            <span style={{ display: "block", marginBottom: "0.35rem", color: "#333333" }}>
-              Email
-            </span>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@northeastern.edu"
-              style={{
-                width: "100%",
-                padding: "0.75rem 1rem",
-                borderRadius: "10px",
-                border: "1px solid #dddddd",
-                fontSize: "1rem",
-              }}
-            />
-          </label>
-
-          <label style={{ display: "block", marginBottom: "0.75rem" }}>
-            <span style={{ display: "block", marginBottom: "0.35rem", color: "#333333" }}
-              >Username</span>
-            <input
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              placeholder="yourusername"
-              style={{
-                width: "100%",
-                padding: "0.75rem 1rem",
-                borderRadius: "10px",
-                border: "1px solid #dddddd",
-                fontSize: "1rem",
-              }}
-            />
-          </label>
-
-          <label style={{ display: "block", marginBottom: "0.75rem" }}>
-            <span style={{ display: "block", marginBottom: "0.35rem", color: "#333333" }}>
-              Password
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="********"
-              style={{
-                width: "100%",
-                padding: "0.75rem 1rem",
-                borderRadius: "10px",
-                border: "1px solid #dddddd",
-                fontSize: "1rem",
-              }}
-            />
-          </label>
-
-          <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-            <input
-              type="checkbox"
-              checked={isStudent}
-              onChange={(event) => setIsStudent(event.target.checked)}
-            />
-            Northeastern student
-          </label>
-
-          {error && (
-            <div style={{ color: "#b00020", marginBottom: "0.75rem" }}>{error}</div>
-          )}
-          {success && (
-            <div style={{ color: "#0a7b45", marginBottom: "0.75rem" }}>{success}</div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "0.85rem",
-              borderRadius: "999px",
-              border: "none",
-              backgroundColor: "#111111",
-              color: "#ffffff",
-              fontSize: "1rem",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            {loading ? "Creating account..." : "Create account"}
-          </button>
-        </form>
       </div>
-    </div>
+    </>
   );
 }

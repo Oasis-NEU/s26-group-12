@@ -5,6 +5,7 @@ import LandingPage from "./Pages/LandingPage.tsx";
 import ClubViewPage from "./Pages/ClubViewPage.tsx";
 import LoginPage from "./Pages/LoginPage.tsx";
 import SignupPage from "./Pages/SignupPage.tsx";
+import ClubDetailedView from "./Pages/ClubDetailedView.tsx";
 
 export default function App() {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ export default function App() {
     setSearchString(searchString);
     navigate("/clubs");
   };
+
+  const handleSelectedClub = (selectedClub: Club) => {
+    setSelectedClub(selectedClub)
+    navigate(`/clubs/${selectedClub?.club_id}`)
+  }
 
   return (
     <Routes>
@@ -32,9 +38,23 @@ export default function App() {
         path="/clubs"
         element={
           <ClubViewPage
-            onSelectClub={(club) => setSelectedClub(club)}
+            onSelectClub={(club) => handleSelectedClub(club)}
             onSetActiveSearchString={(value) => setSearchString(value)}
             activeSearchString={searchString}
+            onNavigateHome={() => navigate("/")}
+            onNavigateLogin={() => navigate("/login")}
+            onNavigateSignup={() => navigate("/signup")}
+          />
+        }
+      />
+      <Route
+        path={`/clubs/${selectedClub?.club_id}`}
+        element={
+          <ClubDetailedView
+            onSetActiveSearchString={(value) => setSearchString(value)}
+            onSearchClub={(searchString: string) => handleSearchLandingPage(searchString)}
+            activeSearchString={searchString}
+            clubBeingViewed={selectedClub}
             onNavigateHome={() => navigate("/")}
             onNavigateLogin={() => navigate("/login")}
             onNavigateSignup={() => navigate("/signup")}

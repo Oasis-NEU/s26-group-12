@@ -1,11 +1,11 @@
-import type { Club, meetDay } from "../Classes/Club";
+import type { Club } from "../Classes/Club";
 
 interface ClubCardProps {
   club: Club;
   onSelectClub: (club: Club) => void;
 }
 
-function getDaysMeetText(day_list: meetDay[]): string {
+function getDaysMeetText(day_list: string[]): string {
     let to_return: string = "";
     day_list.map((day, index) => (
         to_return = index == 0 ? (day) : (to_return + " | " + day)
@@ -138,7 +138,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "0.5rem",
             }}
           >
-            {club.category.toUpperCase()}
+            {club.club_category.toUpperCase()}
           </div>
           <div
             style={{
@@ -159,7 +159,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "1.5rem",
             }}
           >
-            {getDaysMeetText(club.days_meet as meetDay[])}
+            {getDaysMeetText(club.days_meet as string[])}
           </div>
 
         </div>
