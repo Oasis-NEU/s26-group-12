@@ -9,10 +9,20 @@ import { clubAPI } from "../api/client";
 type Props = {
   onSelectClub: (club: Club) => void;
   onSetActiveSearchString: (searchString: string) => void;
-  activeSearchString: string
+  activeSearchString: string;
+  onNavigateHome: () => void;
+  onNavigateLogin: () => void;
+  onNavigateSignup: () => void;
 };
 
-export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, activeSearchString }: Props) {
+export default function ClubViewPage({
+  onSelectClub,
+  onSetActiveSearchString,
+  activeSearchString,
+  onNavigateHome,
+  onNavigateLogin,
+  onNavigateSignup,
+}: Props) {
   const [clubsTable, setClubsTable] = useState<Club[]>([]);
   const [clubsShown, setClubsShown] = useState<Club[]>([]);
   const [activeClubFilter, setActiveClubFilter] =
@@ -197,6 +207,21 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
           }}
         >
           <button
+            onClick={onNavigateHome}
+            style={{
+              color: "#ffffff",
+              backgroundColor: "transparent",
+              border: "none",
+              fontSize: "16px",
+              fontWeight: "500",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              padding: "8px 12px",
+            }}
+          >
+            Home
+          </button>
+          <button
             onClick={() => setFilteringClubs(!filteringClubs)}
             style={{
               color: "#ffffff",
@@ -212,6 +237,7 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
             Filter
           </button>
           <button
+            onClick={onNavigateLogin}
             style={{
               color: "#ffffff",
               backgroundColor: "transparent",
@@ -226,6 +252,7 @@ export default function ClubViewPage({ onSelectClub, onSetActiveSearchString, ac
             Log In
           </button>
           <button
+            onClick={onNavigateSignup}
             style={{
               color: "#ffffff",
               backgroundColor: "transparent",

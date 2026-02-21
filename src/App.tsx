@@ -1,32 +1,65 @@
 import { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import type { Club } from "./Classes/Club";
-import LandingPage from './Pages/LandingPage.tsx'
-import ClubViewPage from './Pages/ClubViewPage.tsx'
+import LandingPage from "./Pages/LandingPage.tsx";
+import ClubViewPage from "./Pages/ClubViewPage.tsx";
+import LoginPage from "./Pages/LoginPage.tsx";
+import SignupPage from "./Pages/SignupPage.tsx";
 
 export default function App() {
-  const [page, setPage] = useState<"landing" | "clubview">("landing");
-
-  // shared state goes here
+  const navigate = useNavigate();
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [searchString, setSearchString] = useState<string>("");
 
   const handleSearchLandingPage = (searchString: string) => {
-    setPage("clubview")
-    setSearchString(searchString)
-    console.log(searchString)
-  }
+    setSearchString(searchString);
+    navigate("/clubs");
+  };
 
-  if (page === "landing") return (
-    <LandingPage
-      onSearchClub={(searchString) => handleSearchLandingPage(searchString)}
-    />
-  );
-
-  if (page === "clubview") return (
-    <ClubViewPage
-      onSelectClub={(club) => setSelectedClub(club)}
-      onSetActiveSearchString={(searchString) => setSearchString(searchString)}
-      activeSearchString={searchString}
-    />
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <LandingPage
+            onSearchClub={(searchValue) => handleSearchLandingPage(searchValue)}
+            onNavigateLogin={() => navigate("/login")}
+            onNavigateSignup={() => navigate("/signup")}
+          />
+        }
+      />
+      <Route
+        path="/clubs"
+        element={
+          <ClubViewPage
+            onSelectClub={(club) => setSelectedClub(club)}
+            onSetActiveSearchString={(value) => setSearchString(value)}
+            activeSearchString={searchString}
+            onNavigateHome={() => navigate("/")}
+            onNavigateLogin={() => navigate("/login")}
+            onNavigateSignup={() => navigate("/signup")}
+          />
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <LoginPage
+            onNavigateHome={() => navigate("/")}
+            onNavigateSignup={() => navigate("/signup")}
+            onLoginSuccess={() => navigate("/clubs")}
+          />
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <SignupPage
+            onNavigateHome={() => navigate("/")}
+            onNavigateLogin={() => navigate("/login")}
+          />
+        }
+      />
+    </Routes>
   );
 }

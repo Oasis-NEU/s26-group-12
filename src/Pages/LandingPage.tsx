@@ -4,9 +4,11 @@ import { clubAPI } from "../api/client";
 
 type Props = {
   onSearchClub: (searchString: string) => void;
+  onNavigateLogin: () => void;
+  onNavigateSignup: () => void;
 };
 
-export default function LandingPage({ onSearchClub }: Props) {
+export default function LandingPage({ onSearchClub, onNavigateLogin, onNavigateSignup }: Props) {
   const [clubNameSearchValue, setClubNameSearchValue] = useState<string>("");
   const [searching, setSearching] = useState<boolean>(false);
 
@@ -53,6 +55,7 @@ export default function LandingPage({ onSearchClub }: Props) {
             cursor: "pointer",
             padding: "0.75rem 1.5rem",
           }}
+          onClick={onNavigateLogin}
         >
           Log In
         </button>
@@ -67,6 +70,7 @@ export default function LandingPage({ onSearchClub }: Props) {
             padding: "0.75rem 2rem",
             borderRadius: "9999px", // Makes it fully rounded
           }}
+          onClick={onNavigateSignup}
         >
           Sign Up
         </button>
