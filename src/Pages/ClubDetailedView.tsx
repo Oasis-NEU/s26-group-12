@@ -25,8 +25,12 @@ export default function ClubDetailedView({
   activeSearchString,
   onNavigateHome,
   clubBeingViewed,
-  onSearchClub
+  onSearchClub,
 }: Props) {
+  const [selectedRating, setSelectedRating] = useState<number>(0);
+  const [hoveredRating, setHoveredRating] = useState<number>(0);
+  const [commentText, setCommentText] = useState<string>("");
+
   if (clubBeingViewed === null) {
     return;
   }
@@ -34,11 +38,11 @@ export default function ClubDetailedView({
   const handleSearchButtonClicked = () => {
     onSetActiveSearchString(activeSearchString);
     onSearchClub(activeSearchString);
-  }
+  };
 
   const totalRatings = clubBeingViewed.number_of_ratings;
   const averageRating = clubBeingViewed.average_rating;
-  const clubName = clubBeingViewed.name; // replace with your variable
+  const clubName = clubBeingViewed.name;
 
   const ratingLabels = ["Awesome", "Great", "Good", "OK", "Terrible"];
   const ratingValues = [5, 4, 3, 2, 1];
@@ -70,6 +74,7 @@ export default function ClubDetailedView({
         showFilterButton={false}
         leftCornerText={""}
       />
+
       <div
         style={{
           display: "flex",
@@ -106,6 +111,18 @@ export default function ClubDetailedView({
           <h2 style={{ fontSize: "2.6rem", fontWeight: 900, margin: 0 }}>
             {clubName}
           </h2>
+          <p
+            style={{
+              fontSize: "1.1rem",
+              color: "#444",
+              lineHeight: 1.7,
+              maxWidth:"300px",
+              margin: 0,
+              marginTop:"1.5rem"
+            }}
+          >
+            {clubBeingViewed.description}
+          </p>
         </div>
 
         {/* Right side - Rating Distribution */}
@@ -115,8 +132,8 @@ export default function ClubDetailedView({
             backgroundColor: "#f5f5f5ff",
             borderRadius: "10px",
             padding: "1.95rem",
-            paddingLeft:"3rem",
-            paddingRight:"3rem",
+            paddingLeft: "3rem",
+            paddingRight: "3rem",
             maxWidth: "676px",
           }}
         >
@@ -182,6 +199,83 @@ export default function ClubDetailedView({
               </span>
             </div>
           ))}
+        </div>
+
+        {/* Comment Box */}
+        <div style={{ width: "100%", maxWidth: "879px", marginLeft: "0rem" }}>
+          <p
+            style={{
+              fontWeight: 700,
+              fontSize: "1.69rem",
+              marginBottom: "1.3rem",
+            }}
+          >
+            Leave a Review
+          </p>
+
+          <div
+            style={{ display: "flex", gap: "0.65rem", marginBottom: "0.65rem" }}
+          >
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => setSelectedRating(star)}
+                onMouseEnter={() => setHoveredRating(star)}
+                onMouseLeave={() => setHoveredRating(0)}
+                style={{
+                  fontSize: "2.6rem",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color:
+                    star <= (hoveredRating || selectedRating)
+                      ? "#ffae00ff"
+                      : "#ccc",
+                  padding: 0,
+                  lineHeight: 1,
+                }}
+              >
+                ★
+              </button>
+            ))}
+          </div>
+
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Share your experience with this club..."
+            style={{
+              width: "100%",
+              minHeight: "10.4rem",
+              padding: "1.3rem",
+              borderRadius: "10px",
+              border: "1px solid #e0e0e0",
+              fontSize: "1.3rem",
+              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+              resize: "vertical",
+              boxSizing: "border-box",
+              outline: "none",
+            }}
+          />
+
+          <button
+            onClick={() => {
+              /* hook up to API */
+            }}
+            style={{
+              marginTop: "0.975rem",
+              padding: "0.975rem 2.6rem",
+              backgroundColor: "#111111",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "999px",
+              fontSize: "1rem",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Submit Review
+          </button>
         </div>
       </div>
     </div>

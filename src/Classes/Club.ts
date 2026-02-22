@@ -9,6 +9,7 @@ export interface Club {
   average_rating: number;
   individual_ratings: number[]
 }
+
 export const defaultClubs: Club[] = [
   {
     name: "Robotics Club",
