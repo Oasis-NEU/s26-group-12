@@ -3,6 +3,8 @@ import type { Club } from "./Classes/Club";
 import LandingPage from './Pages/LandingPage.tsx'
 import ClubViewPage from './Pages/ClubViewPage.tsx'
 
+
+
 export default function App() {
   const [page, setPage] = useState<"landing" | "clubview">("landing");
 
