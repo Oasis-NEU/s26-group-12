@@ -10,8 +10,14 @@ def hash_password(password: str) -> str:
     """Simple password hashing - use bcrypt in production"""
     return hashlib.sha256(password.encode()).hexdigest()
 
+def validate_password_strength(password: str) -> bool:
+    import re
+    # At least one uppercase, one lowercase, one digit, one symbol, and at least 10 characters
+    pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$'
+    return re.match(pattern, password) is not None
+
 @router.post("/register", response_model=UserResponse)
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+def register_user(user: UserCreate, db: Session = Depends(get_db)) -> UserResponse:
     """Register a new user"""
     
     # Check if user already exists
@@ -25,6 +31,12 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="User already exists"
         )
     
+    # Validate password strength
+    if not validate_password_strength(user.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 10 characters long, include at least one uppercase letter, one lowercase letter, one digit, and one symbol."
+        )
     # Create new user
     db_user = UserDB(
         email=user.email,
@@ -39,7 +51,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 @router.post("/login")
-def login_user(username: str, password: str, db: Session = Depends(get_db)):
+def login_user(username: str, password: str, db: Session = Depends(get_db)) -> dict:
     """Login user - returns user data and session token"""
     
     user = db.query(UserDB).filter(UserDB.username == username).first()
@@ -59,7 +71,7 @@ def login_user(username: str, password: str, db: Session = Depends(get_db)):
     }
 
 @router.get("/user/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
+def get_user(user_id: int, db: Session = Depends(get_db)) -> UserResponse:
     """Get user info by ID"""
     user = db.query(UserDB).filter(UserDB.user_id == user_id).first()
     if not user:
