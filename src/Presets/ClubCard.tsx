@@ -5,13 +5,6 @@ interface ClubCardProps {
   onSelectClub: (club: Club) => void;
 }
 
-function getDaysMeetText(day_list: string[]): string {
-    let to_return: string = "";
-    day_list.map((day, index) => (
-        to_return = index == 0 ? (day) : (to_return + " | " + day)
-    ))
-    return to_return;
-}
 
 function getRatingColor(rating: number): string {
   const clampedRating = Math.max(1, Math.min(5, rating));
@@ -126,7 +119,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "0.5rem",
             }}
           >
-            {club.name}
+            {club.name ?? "Unnamed Club"}
           </h2>
           <div
             style={{
@@ -138,7 +131,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "0.5rem",
             }}
           >
-            {club.club_category.toUpperCase()}
+            {(club.org_type ?? "").toUpperCase()}
           </div>
           <div
             style={{
@@ -148,7 +141,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "1.5rem",
             }}
           >
-            {club.description}
+            {club.mission ?? "No description available."}
           </div>
 
           <div
@@ -159,7 +152,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               marginBottom: "1.5rem",
             }}
           >
-            {getDaysMeetText(club.days_meet as string[])}
+            {club.categories.join(" | ")}
           </div>
 
         </div>
