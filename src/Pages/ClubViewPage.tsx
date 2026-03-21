@@ -57,10 +57,11 @@ export default function ClubViewPage({
 
   // Handle search or filter changes
   useEffect(() => {
-    if (activeSearchString) {
-      handleSearchButtonClicked();
-    }
-  }, [activeSearchString]);
+  let end_club_list: Club[] = [...clubsTable];
+  end_club_list = filterClubs(end_club_list, activeClubFilter);
+  end_club_list = searchClubsLocal(end_club_list, activeSearchString);
+  setClubsShown(end_club_list);
+}, [activeSearchString, clubsTable, activeClubFilter]);
 
   const filterClubs = (end_club_list: Club[], filters: ClubFilter) => {
     if (filters === null) {
