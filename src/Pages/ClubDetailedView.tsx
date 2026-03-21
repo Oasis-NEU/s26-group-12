@@ -4,6 +4,8 @@ import { ratingAPI, clubAPI } from "../api/client";
 import type { Rating } from "../api/client";
 import type { Club } from "../Classes/Club";
 import TopBar from "../Presets/TopBar";
+import type { User } from "../api/client";
+
 
 type Props = {
   onNavigateLogin: () => void;
@@ -13,6 +15,8 @@ type Props = {
   onNavigateHome: () => void;
   clubBeingViewed: Club | null;
   onSearchClub: (value: string) => void;
+  currentUser: User | null;
+
 };
 
 export default function ClubDetailedView({
@@ -23,6 +27,7 @@ export default function ClubDetailedView({
   onNavigateHome,
   clubBeingViewed,
   onSearchClub,
+  currentUser,
 }: Props) {
   const { clubId } = useParams();
   const [club, setClub] = useState<Club | null>(clubBeingViewed);
@@ -35,13 +40,14 @@ export default function ClubDetailedView({
     if (!club && clubId) {
       clubAPI.getClubById(Number(clubId)).then(setClub);
     }
-  }, [clubId]);
+  }, [club, clubId]);
 
   useEffect(() => {
-    if (club?.club_id) {
-      ratingAPI.getClubRatings(club.club_id).then(setRatings);
-    }
-  }, [club?.club_id]);
+    if (club?.club_id != null) {
+    ratingAPI.getClubRatings(club.club_id).then(setRatings);
+  }
+}, [club?.club_id]);
+
 
   if (club === null) return null;
 
@@ -51,21 +57,24 @@ export default function ClubDetailedView({
   };
 
   const handleSubmitReview = async () => {
-    if (selectedRating === 0 || !club) return;
-    try {
-      const newRating = await ratingAPI.createRating(
-        club.club_id!,
-        1, // replace with real user_id once auth is wired up
-        selectedRating,
-        commentText || null
-      );
-      setRatings((prev) => [...prev, newRating]);
-      setSelectedRating(0);
-      setCommentText("");
-    } catch (err) {
-      console.error("Failed to submit review:", err);
-    }
-  };
+  if (selectedRating === 0 || !club || !currentUser) return;
+  console.log("club_id:", club.club_id, "user_id:", currentUser.user_id);
+
+  try {
+    const newRating = await ratingAPI.createRating(
+      club.club_id!,
+      currentUser.user_id,
+      selectedRating,
+      commentText || null
+
+    );
+    setRatings((prev) => [...prev, newRating]);
+    setSelectedRating(0);
+    setCommentText("");
+  } catch (err) {
+    console.error("Failed to submit review:", err);
+  }
+};
 
   const totalRatings = ratings.length;
   const averageRating = totalRatings > 0
@@ -107,7 +116,7 @@ export default function ClubDetailedView({
           </p>
           <h2 style={{ fontSize: "2.6rem", fontWeight: 900, margin: 0 }}>{club.name}</h2>
           <p style={{ fontSize: "1.1rem", color: "#444", lineHeight: 1.7, maxWidth: "300px", margin: 0, marginTop: "1.5rem" }}>
-            {club.description}
+            {club.mission}
           </p>
         </div>
 
@@ -135,6 +144,7 @@ export default function ClubDetailedView({
         </div>
 
         {/* Review Form */}
+        {currentUser ? (
         <div style={{ width: "100%", maxWidth: "879px" }}>
           <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1.3rem" }}>Leave a Review</p>
           <div style={{ display: "flex", gap: "0.65rem", marginBottom: "0.65rem" }}>
@@ -191,22 +201,36 @@ export default function ClubDetailedView({
           >
             Submit Review
           </button>
+        </div>
+      ) : (
+        <div style={{ width: "100%", maxWidth: "879px" }}>
+          <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "0.5rem" }}>Leave a Review</p>
+          <p style={{ color: "#555", fontSize: "1rem" }}>
+            <button
+              onClick={onNavigateLogin}
+              style={{ background: "none", border: "none", color: "#1a73e8", cursor: "pointer", fontSize: "1rem", padding: 0 }}
+            >
+              Log in
+            </button>{" "}to leave a review.
+          </p>
+        </div>
+      )}
 
           {/* Reviews List */}
-          {ratings.filter(r => r.review_text).length > 0 && (
-            <div style={{ marginTop: "2rem" }}>
-              <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1rem" }}>Reviews</p>
-              {ratings.filter(r => r.review_text).map((r) => (
-                <div key={r.rating_id} style={{ backgroundColor: "#f5f5f5", borderRadius: "10px", padding: "1rem 1.3rem", marginBottom: "1rem" }}>
-                  <div style={{ marginBottom: "0.4rem" }}>
-                    {"★".repeat(r.rating_score)}{"☆".repeat(5 - r.rating_score)}
-                  </div>
-                  <p style={{ margin: 0, fontSize: "1rem", color: "#333" }}>{r.review_text}</p>
+        {ratings.filter(r => r.review_text).length > 0 && (
+          <div style={{ width: "100%", maxWidth: "879px", marginTop: "2rem" }}>
+            <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1rem" }}>Reviews</p>
+            {ratings.filter(r => r.review_text).map((r) => (
+              <div key={r.rating_id} style={{ backgroundColor: "#f5f5f5", borderRadius: "10px", padding: "1rem 1.3rem", marginBottom: "1rem" }}>
+                <div style={{ marginBottom: "0.4rem" }}>
+                  {"★".repeat(r.rating_score)}{"☆".repeat(5 - r.rating_score)}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#333" }}>{r.review_text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );

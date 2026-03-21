@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface TopBarProps {
   onSetActiveSearchString: (searchString: string) => void;
   activeSearchString: string;
@@ -99,7 +97,7 @@ export default function TopBar({
             alignItems: "center",
           }}
           onClick={() => {
-            onSearchButtonClicked ? onSearchButtonClicked() : null;
+            if (onSearchButtonClicked) onSearchButtonClicked();
           }}
         >
           🔍
