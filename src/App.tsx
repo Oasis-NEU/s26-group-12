@@ -48,19 +48,19 @@ export default function App() {
         }
       />
       <Route
-        path={`/clubs/${selectedClub?.club_id}`}
-        element={
-          <ClubDetailedView
-            onSetActiveSearchString={(value) => setSearchString(value)}
-            onSearchClub={(searchString: string) => handleSearchLandingPage(searchString)}
-            activeSearchString={searchString}
-            clubBeingViewed={selectedClub}
-            onNavigateHome={() => navigate("/")}
-            onNavigateLogin={() => navigate("/login")}
-            onNavigateSignup={() => navigate("/signup")}
-          />
-        }
-      />
+      path="/clubs/:clubId"
+      element={
+        <ClubDetailedView
+          onSetActiveSearchString={(value) => setSearchString(value)}
+          onSearchClub={(searchString: string) => handleSearchLandingPage(searchString)}
+          activeSearchString={searchString}
+          clubBeingViewed={selectedClub}
+          onNavigateHome={() => navigate("/")}
+          onNavigateLogin={() => navigate("/login")}
+          onNavigateSignup={() => navigate("/signup")}
+        />
+      }
+    />
       <Route
         path="/login"
         element={
