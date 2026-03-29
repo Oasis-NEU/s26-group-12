@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.database import get_db, UserDB
 from app.models import UserCreate, UserResponse
@@ -50,18 +51,37 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)) -> UserRespon
     
     return db_user
 
+
+# Pydantic model for login request
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+from fastapi import Body, Query
+
 @router.post("/login")
-def login_user(username: str, password: str, db: Session = Depends(get_db)) -> dict:
-    """Login user - returns user data and session token"""
-    
+def login_user(
+    request: LoginRequest = Body(None),
+    username: str = Query(None),
+    password: str = Query(None),
+    db: Session = Depends(get_db)
+) -> dict:
+    """Login user - returns user data and session token. Accepts JSON body or query params."""
+    # Prefer JSON body if provided
+    if request and request.username and request.password:
+        username = request.username
+        password = request.password
+    if not username or not password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username and password required."
+        )
     user = db.query(UserDB).filter(UserDB.username == username).first()
-    
     if not user or user.password != hash_password(password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
-    
     return {
         "user_id": user.user_id,
         "username": user.username,
