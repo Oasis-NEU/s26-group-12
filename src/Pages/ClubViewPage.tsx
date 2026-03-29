@@ -57,10 +57,11 @@ export default function ClubViewPage({
 
   // Handle search or filter changes
   useEffect(() => {
-    if (activeSearchString) {
-      handleSearchButtonClicked();
-    }
-  }, [activeSearchString]);
+  let end_club_list: Club[] = [...clubsTable];
+  end_club_list = filterClubs(end_club_list, activeClubFilter);
+  end_club_list = searchClubsLocal(end_club_list, activeSearchString);
+  setClubsShown(end_club_list);
+}, [activeSearchString, clubsTable, activeClubFilter]);
 
   const filterClubs = (end_club_list: Club[], filters: ClubFilter) => {
     if (filters === null) {
@@ -76,13 +77,13 @@ export default function ClubViewPage({
 
     if (filters?.["Club Category"]) {
       end_club_list = end_club_list.filter(
-        (club) => club.club_category === filters["Club Category"],
+        (club) => club.org_type === filters["Club Category"],
       );
     }
 
     if (filters?.["Meeting Days"]) {
       end_club_list = end_club_list.filter((club) =>
-        club.days_meet.includes(filters["Meeting Days"] as string),
+        club.categories.includes(filters["Meeting Days"] as string),
       );
     }
 
@@ -101,8 +102,8 @@ export default function ClubViewPage({
     }
     end_club_list = end_club_list.filter(
       (club) =>
-        club.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        club.description.toLowerCase().includes(filterText.toLowerCase()),
+        (club.name ?? "").toLowerCase().includes(filterText.toLowerCase()) ||
+        (club.mission ?? "").toLowerCase().includes(filterText.toLowerCase()),
     );
     return end_club_list;
   };
@@ -155,6 +156,12 @@ export default function ClubViewPage({
             <p style={{ fontSize: "1.8rem", fontWeight: "400", color: "#000000" }}>
               Loading clubs...
             </p>
+          </div>
+        )}
+
+        {error && (
+          <div style={{ padding: "32px 24px", marginLeft: "20rem" }}>
+            <p style={{ fontSize: "1.8rem", color: "red" }}>{error}</p>
           </div>
         )}
         

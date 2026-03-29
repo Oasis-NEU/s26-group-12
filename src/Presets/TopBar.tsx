@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface TopBarProps {
   onSetActiveSearchString: (searchString: string) => void;
   activeSearchString: string;
@@ -99,7 +97,7 @@ export default function TopBar({
             alignItems: "center",
           }}
           onClick={() => {
-            onSearchButtonClicked ? onSearchButtonClicked() : null;
+            if (onSearchButtonClicked) onSearchButtonClicked();
           }}
         >
           🔍
@@ -179,21 +177,6 @@ export default function TopBar({
           }}
         >
           Sign Up
-        </button>
-        <button
-          style={{
-            color: "#000000",
-            backgroundColor: "#ffffff",
-            border: "none",
-            borderRadius: "50px",
-            fontSize: "16px",
-            fontWeight: "600",
-            cursor: "pointer",
-            padding: "8px 20px",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Help
         </button>
       </div>
     </div>

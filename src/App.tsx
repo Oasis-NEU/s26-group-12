@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import type { Club } from "./Classes/Club";
+import type { User } from "./api/client";
 import LandingPage from "./Pages/LandingPage.tsx";
 import ClubViewPage from "./Pages/ClubViewPage.tsx";
 import LoginPage from "./Pages/LoginPage.tsx";
@@ -12,15 +13,18 @@ export default function App() {
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [searchString, setSearchString] = useState<string>("");
 
+  const stored = localStorage.getItem("rmc_auth");
+  const currentUser: User | null = stored ? JSON.parse(stored) : null;
+
   const handleSearchLandingPage = (searchString: string) => {
     setSearchString(searchString);
     navigate("/clubs");
   };
 
   const handleSelectedClub = (selectedClub: Club) => {
-    setSelectedClub(selectedClub)
-    navigate(`/clubs/${selectedClub?.club_id}`)
-  }
+    setSelectedClub(selectedClub);
+    navigate(`/clubs/${selectedClub?.club_id}`);
+  };
 
   return (
     <Routes>
@@ -48,13 +52,14 @@ export default function App() {
         }
       />
       <Route
-        path={`/clubs/${selectedClub?.club_id}`}
+        path="/clubs/:clubId"
         element={
           <ClubDetailedView
             onSetActiveSearchString={(value) => setSearchString(value)}
             onSearchClub={(searchString: string) => handleSearchLandingPage(searchString)}
             activeSearchString={searchString}
             clubBeingViewed={selectedClub}
+            currentUser={currentUser}
             onNavigateHome={() => navigate("/")}
             onNavigateLogin={() => navigate("/login")}
             onNavigateSignup={() => navigate("/signup")}
