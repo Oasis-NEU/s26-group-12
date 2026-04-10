@@ -12,13 +12,20 @@ export default function App() {
   const navigate = useNavigate();
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [searchString, setSearchString] = useState<string>("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem("rmc_auth");
+    return stored ? JSON.parse(stored) : null;
+  });
 
-  const stored = localStorage.getItem("rmc_auth");
-  const currentUser: User | null = stored ? JSON.parse(stored) : null;
+  const handleNavigateClubs = () => {
+    setRefreshKey(k => k + 1);
+    navigate("/clubs");
+  };
 
   const handleSearchLandingPage = (searchString: string) => {
     setSearchString(searchString);
-    navigate("/clubs");
+    handleNavigateClubs();
   };
 
   const handleSelectedClub = (selectedClub: Club) => {
@@ -26,6 +33,13 @@ export default function App() {
     navigate(`/clubs/${selectedClub?.club_id}`);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("rmc_auth");
+    setCurrentUser(null);
+    navigate("/");
+  };
+
+  console.log("refreshKey:", refreshKey);
   return (
     <Routes>
       <Route
@@ -42,12 +56,15 @@ export default function App() {
         path="/clubs"
         element={
           <ClubViewPage
+            key={refreshKey}
             onSelectClub={(club) => handleSelectedClub(club)}
             onSetActiveSearchString={(value) => setSearchString(value)}
             activeSearchString={searchString}
             onNavigateHome={() => navigate("/")}
             onNavigateLogin={() => navigate("/login")}
             onNavigateSignup={() => navigate("/signup")}
+            currentUser={currentUser}
+            onLogout={handleLogout}
           />
         }
       />
@@ -63,6 +80,7 @@ export default function App() {
             onNavigateHome={() => navigate("/")}
             onNavigateLogin={() => navigate("/login")}
             onNavigateSignup={() => navigate("/signup")}
+            onLogout={handleLogout}
           />
         }
       />
@@ -72,7 +90,10 @@ export default function App() {
           <LoginPage
             onNavigateHome={() => navigate("/")}
             onNavigateSignup={() => navigate("/signup")}
-            onLoginSuccess={() => navigate("/clubs")}
+            onLoginSuccess={(user) => {
+              setCurrentUser(user);
+              handleNavigateClubs();
+            }}
           />
         }
       />

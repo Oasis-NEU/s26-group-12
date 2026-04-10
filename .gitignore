@@ -29,3 +29,11 @@ __pycache__/
 clubs_data.json
 debug_page.py
 page_source.html
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+*.db

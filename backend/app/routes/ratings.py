@@ -11,7 +11,6 @@ def create_rating(rating: RatingCreate):
     if not club.data:
         raise HTTPException(status_code=404, detail="Club not found")
     
-    # Check user exists in local db (users are still local)
     # Upsert rating
     existing = supabase.table("ratings").select("*").eq("club_id", rating.club_id).eq("user_id", rating.user_id).execute()
     
@@ -30,6 +29,21 @@ def create_rating(rating: RatingCreate):
     
     if not result.data:
         raise HTTPException(status_code=500, detail="Failed to save rating")
+
+    # Recalculate average and count
+    all_ratings = supabase.table("ratings").select("rating_score").eq("club_id", rating.club_id).execute()
+    scores = [r["rating_score"] for r in all_ratings.data]
+    new_count = len(scores)
+    new_average = sum(scores) / new_count if new_count > 0 else 0.0
+
+    print(f"Updating club {rating.club_id}: avg={new_average}, count={new_count}")
+
+    update_result = supabase.table("clubs").update({
+        "average_rating": new_average,
+        "number_of_ratings": new_count
+    }).eq("club_id", rating.club_id).execute()
+
+    print(f"Update result: {update_result.data}")
     
     return result.data[0]
 

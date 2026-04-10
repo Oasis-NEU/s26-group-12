@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { authAPI } from "../api/client";
+import type { User } from "../api/client";
 
 type Props = {
   onNavigateHome: () => void;
   onNavigateSignup: () => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (user: User) => void;
 };
 
 export default function LoginPage({ onNavigateHome, onNavigateSignup, onLoginSuccess }: Props) {
@@ -29,7 +30,7 @@ export default function LoginPage({ onNavigateHome, onNavigateSignup, onLoginSuc
       const response = await authAPI.login(username, password);
       localStorage.setItem("rmc_auth", JSON.stringify(response));
       setSuccess("Logged in successfully.");
-      onLoginSuccess();
+      onLoginSuccess(response);
     } catch (err) {
       setError("Login failed. Check your username and password.");
       console.error("Login error:", err);
