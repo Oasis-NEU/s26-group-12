@@ -27,6 +27,8 @@ __pycache__/
 
 .env
 clubs_data.json
+debug_page.py
+page_source.html
 
 # Python
 __pycache__/
