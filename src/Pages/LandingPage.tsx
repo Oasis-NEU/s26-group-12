@@ -97,7 +97,7 @@ export default function LandingPage({ onSearchClub, onNavigateLogin, onNavigateS
               fontWeight: 400,
             }} // ------ Title Text
           >
-            <strong>Northeastern University Club Finder</strong>
+            <strong>Husky ClubQuest</strong>
           </div>
           <div
             style={{
@@ -110,7 +110,7 @@ export default function LandingPage({ onSearchClub, onNavigateLogin, onNavigateS
             }} // ------ Title Text
           >
             Enter a <strong>Club</strong> to get Started
-          </div>
+          </div>type="text"
           <div
             style={{
               ...searchBarStyles.searchContainer,
@@ -123,6 +123,9 @@ export default function LandingPage({ onSearchClub, onNavigateLogin, onNavigateS
               type="text"
               value={clubNameSearchValue}
               onChange={(e) => setClubNameSearchValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
               placeholder={"Type here..."}
               style={searchBarStyles.searchInput}
             />

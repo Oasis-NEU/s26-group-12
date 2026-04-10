@@ -6,7 +6,6 @@ import type { Club } from "../Classes/Club";
 import TopBar from "../Presets/TopBar";
 import type { User } from "../api/client";
 
-
 type Props = {
   onNavigateLogin: () => void;
   onNavigateSignup: () => void;
@@ -16,7 +15,7 @@ type Props = {
   clubBeingViewed: Club | null;
   onSearchClub: (value: string) => void;
   currentUser: User | null;
-
+  onLogout?: () => void;
 };
 
 export default function ClubDetailedView({
@@ -28,6 +27,7 @@ export default function ClubDetailedView({
   clubBeingViewed,
   onSearchClub,
   currentUser,
+  onLogout,
 }: Props) {
   const { clubId } = useParams();
   const [club, setClub] = useState<Club | null>(clubBeingViewed);
@@ -44,10 +44,9 @@ export default function ClubDetailedView({
 
   useEffect(() => {
     if (club?.club_id != null) {
-    ratingAPI.getClubRatings(club.club_id).then(setRatings);
-  }
-}, [club?.club_id]);
-
+      ratingAPI.getClubRatings(club.club_id).then(setRatings);
+    }
+  }, [club?.club_id]);
 
   if (club === null) return null;
 
@@ -57,24 +56,23 @@ export default function ClubDetailedView({
   };
 
   const handleSubmitReview = async () => {
-  if (selectedRating === 0 || !club || !currentUser) return;
-  console.log("club_id:", club.club_id, "user_id:", currentUser.user_id);
+    if (selectedRating === 0 || !club || !currentUser) return;
+    console.log("club_id:", club.club_id, "user_id:", currentUser.user_id);
 
-  try {
-    const newRating = await ratingAPI.createRating(
-      club.club_id!,
-      currentUser.user_id,
-      selectedRating,
-      commentText || null
-
-    );
-    setRatings((prev) => [...prev, newRating]);
-    setSelectedRating(0);
-    setCommentText("");
-  } catch (err) {
-    console.error("Failed to submit review:", err);
-  }
-};
+    try {
+      const newRating = await ratingAPI.createRating(
+        club.club_id!,
+        currentUser.user_id,
+        selectedRating,
+        commentText || null
+      );
+      setRatings((prev) => [...prev, newRating]);
+      setSelectedRating(0);
+      setCommentText("");
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+    }
+  };
 
   const totalRatings = ratings.length;
   const averageRating = totalRatings > 0
@@ -99,6 +97,8 @@ export default function ClubDetailedView({
         onNavigateSignup={onNavigateSignup}
         showFilterButton={false}
         leftCornerText={""}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
 
       <div style={{ display: "flex", flexWrap: "wrap", padding: "100px 2rem 2rem 15.6rem", gap: "2.6rem" }}>
@@ -145,78 +145,78 @@ export default function ClubDetailedView({
 
         {/* Review Form */}
         {currentUser ? (
-        <div style={{ width: "100%", maxWidth: "879px" }}>
-          <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1.3rem" }}>Leave a Review</p>
-          <div style={{ display: "flex", gap: "0.65rem", marginBottom: "0.65rem" }}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onClick={() => setSelectedRating(star)}
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(0)}
-                style={{
-                  fontSize: "2.6rem",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  color: star <= (hoveredRating || selectedRating) ? "#ffae00ff" : "#ccc",
-                  padding: 0,
-                  lineHeight: 1,
-                }}
-              >
-                ★
-              </button>
-            ))}
-          </div>
-          <textarea
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Share your experience with this club..."
-            style={{
-              width: "100%",
-              minHeight: "10.4rem",
-              padding: "1.3rem",
-              borderRadius: "10px",
-              border: "1px solid #e0e0e0",
-              fontSize: "1.3rem",
-              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-              resize: "vertical",
-              boxSizing: "border-box",
-              outline: "none",
-            }}
-          />
-          <button
-            onClick={handleSubmitReview}
-            style={{
-              marginTop: "0.975rem",
-              padding: "0.975rem 2.6rem",
-              backgroundColor: "#111111",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "999px",
-              fontSize: "1rem",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Submit Review
-          </button>
-        </div>
-      ) : (
-        <div style={{ width: "100%", maxWidth: "879px" }}>
-          <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "0.5rem" }}>Leave a Review</p>
-          <p style={{ color: "#555", fontSize: "1rem" }}>
+          <div style={{ width: "100%", maxWidth: "879px" }}>
+            <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1.3rem" }}>Leave a Review</p>
+            <div style={{ display: "flex", gap: "0.65rem", marginBottom: "0.65rem" }}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setSelectedRating(star)}
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(0)}
+                  style={{
+                    fontSize: "2.6rem",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    color: star <= (hoveredRating || selectedRating) ? "#ffae00ff" : "#ccc",
+                    padding: 0,
+                    lineHeight: 1,
+                  }}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Share your experience with this club..."
+              style={{
+                width: "100%",
+                minHeight: "10.4rem",
+                padding: "1.3rem",
+                borderRadius: "10px",
+                border: "1px solid #e0e0e0",
+                fontSize: "1.3rem",
+                fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+                resize: "vertical",
+                boxSizing: "border-box",
+                outline: "none",
+              }}
+            />
             <button
-              onClick={onNavigateLogin}
-              style={{ background: "none", border: "none", color: "#1a73e8", cursor: "pointer", fontSize: "1rem", padding: 0 }}
+              onClick={handleSubmitReview}
+              style={{
+                marginTop: "0.975rem",
+                padding: "0.975rem 2.6rem",
+                backgroundColor: "#111111",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "999px",
+                fontSize: "1rem",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
             >
-              Log in
-            </button>{" "}to leave a review.
-          </p>
-        </div>
-      )}
+              Submit Review
+            </button>
+          </div>
+        ) : (
+          <div style={{ width: "100%", maxWidth: "879px" }}>
+            <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "0.5rem" }}>Leave a Review</p>
+            <p style={{ color: "#555", fontSize: "1rem" }}>
+              <button
+                onClick={onNavigateLogin}
+                style={{ background: "none", border: "none", color: "#1a73e8", cursor: "pointer", fontSize: "1rem", padding: 0 }}
+              >
+                Log in
+              </button>{" "}to leave a review.
+            </p>
+          </div>
+        )}
 
-          {/* Reviews List */}
+        {/* Reviews List */}
         {ratings.filter(r => r.review_text).length > 0 && (
           <div style={{ width: "100%", maxWidth: "879px", marginTop: "2rem" }}>
             <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1rem" }}>Reviews</p>
@@ -230,7 +230,6 @@ export default function ClubDetailedView({
             ))}
           </div>
         )}
-
       </div>
     </div>
   );
