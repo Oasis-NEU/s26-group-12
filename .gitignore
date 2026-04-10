@@ -27,3 +27,11 @@ __pycache__/
 
 .env
 clubs_data.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+*.db
