@@ -25,12 +25,25 @@ export default function SignupPage({ onNavigateHome, onNavigateLogin }: Props) {
       return;
     }
 
+    // Client-side password strength check to give immediate feedback
+    const pwPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/;
+    if (!pwPattern.test(password)) {
+      setError(
+        "Password must be at least 10 characters and include uppercase, lowercase, a number, and a symbol."
+      );
+      return;
+    }
+
     try {
       setLoading(true);
       await authAPI.register(email, username, password, isStudent);
       setSuccess("Account created. You can log in now.");
     } catch (err) {
-      setError("Sign up failed. Try a different email or username.");
+      // Try to show server-provided message when available
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const anyErr = err as any;
+      const serverMsg = anyErr?.response?.data?.detail ?? anyErr?.message;
+      setError(serverMsg ? String(serverMsg) : "Sign up failed. Try a different email or username.");
       console.error("Signup error:", err);
     } finally {
       setLoading(false);
@@ -49,7 +62,7 @@ export default function SignupPage({ onNavigateHome, onNavigateLogin }: Props) {
           justify-content: center;
           padding: 1.5rem;
           box-sizing: border-box;
-          font-family: "-apple-system";
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         .signup-card {

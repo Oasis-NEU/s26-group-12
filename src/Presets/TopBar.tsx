@@ -45,7 +45,7 @@ export default function TopBar({
       gap: "12px",
       zIndex: 999,
     }}>
-      <div style={{ color: "#ffffff", fontSize: "1.3rem", fontWeight: "450", fontFamily: "-apple-system", whiteSpace: "nowrap", flexShrink: 0 }}>
+  <div style={{ color: "#ffffff", fontSize: "1.3rem", fontWeight: "450", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', whiteSpace: "nowrap", flexShrink: 0 }}>
         {leftCornerText}
       </div>
 

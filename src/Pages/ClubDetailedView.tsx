@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { ratingAPI, clubAPI } from "../api/client";
 import type { Rating } from "../api/client";
 import type { Club } from "../Classes/Club";
@@ -30,17 +30,30 @@ export default function ClubDetailedView({
   onLogout,
 }: Props) {
   const { clubId } = useParams();
-  const [club, setClub] = useState<Club | null>(clubBeingViewed);
+  const location = useLocation();
+  // Prefer the club passed via navigation state (from LandingPage). Fall back to the prop provided by App.
+  const navClub = (location.state as any)?.club as Club | undefined;
+  const [club, setClub] = useState<Club | null>(navClub ?? clubBeingViewed ?? null);
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [selectedRating, setSelectedRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [commentText, setCommentText] = useState<string>("");
 
   useEffect(() => {
-    if (!club && clubId) {
-      clubAPI.getClubById(Number(clubId)).then(setClub);
+    // If navigation provided a club that's different from the current one, adopt it.
+    if (navClub && (!club || (navClub.club_id ?? navClub.id) !== (club.club_id ?? club.id))) {
+      setClub(navClub);
+      return;
     }
-  }, [club, clubId]);
+
+    // If we don't have a club or the current club doesn't match the URL, fetch it from the API
+    if (clubId) {
+      const currentId = club ? String(club.club_id ?? club.id) : null;
+      if (!currentId || currentId !== String(clubId)) {
+        clubAPI.getClubById(Number(clubId)).then(setClub).catch((err) => console.error("Failed to load club:", err));
+      }
+    }
+  }, [navClub, club, clubId]);
 
   useEffect(() => {
     if (club?.club_id != null) {
@@ -87,7 +100,7 @@ export default function ClubDetailedView({
   const maxCount = Math.max(...ratingCounts, 1);
 
   return (
-    <div style={{ backgroundColor: "#ffffff", width: "100%", height: "100%", fontFamily: "-apple-system" }}>
+    <div style={{ backgroundColor: "#ffffff", width: "100%", height: "100%", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       <TopBar
         onSearchButtonClicked={handleSearchButtonClicked}
         onSetActiveSearchString={onSetActiveSearchString}
@@ -179,7 +192,7 @@ export default function ClubDetailedView({
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0",
                 fontSize: "1.3rem",
-                fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
                 resize: "vertical",
                 boxSizing: "border-box",
                 outline: "none",
@@ -218,14 +231,14 @@ export default function ClubDetailedView({
 
         {/* Reviews List */}
         {ratings.filter(r => r.review_text).length > 0 && (
-          <div style={{ width: "100%", maxWidth: "879px", marginTop: "2rem" }}>
+          <div style={{ width: "100%", maxWidth: "879px", marginTop: "2rem", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
             <p style={{ fontWeight: 700, fontSize: "1.69rem", marginBottom: "1rem" }}>Reviews</p>
             {ratings.filter(r => r.review_text).map((r) => (
-              <div key={r.rating_id} style={{ backgroundColor: "#f5f5f5", borderRadius: "10px", padding: "1rem 1.3rem", marginBottom: "1rem" }}>
-                <div style={{ marginBottom: "0.4rem" }}>
+              <div key={r.rating_id} style={{ backgroundColor: "#f5f5f5", borderRadius: "10px", padding: "1rem 1.3rem", marginBottom: "1rem", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                <div style={{ marginBottom: "0.4rem", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                   {"★".repeat(r.rating_score)}{"☆".repeat(5 - r.rating_score)}
                 </div>
-                <p style={{ margin: 0, fontSize: "1rem", color: "#333" }}>{r.review_text}</p>
+                <p style={{ margin: 0, fontSize: "1rem", color: "#333", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>{r.review_text}</p>
               </div>
             ))}
           </div>
