@@ -173,10 +173,10 @@ export default function ClubViewPage({
 
         {!loading && clubsShown.length === 0 && (
           <div style={{ padding: "32px 24px", marginLeft: "20rem" }}>
-            <p style={{ fontSize: "1.8rem", fontWeight: "400", color: "#000000", margin: "0 0 20px 0", lineHeight: "1.4", fontFamily: "-apple-system" }}>
+            <p style={{ fontSize: "1.8rem", fontWeight: "400", color: "#000000", margin: "0 0 20px 0", lineHeight: "1.4", fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
               There are no clubs that match your requirements.
             </p>
-            <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#333333", margin: 0, fontFamily: "-apple-system" }}>
+            <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#333333", margin: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
               Try an alternate spelling or broaden your search
             </p>
           </div>

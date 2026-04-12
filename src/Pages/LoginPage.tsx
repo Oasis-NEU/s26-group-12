@@ -32,7 +32,11 @@ export default function LoginPage({ onNavigateHome, onNavigateSignup, onLoginSuc
       setSuccess("Logged in successfully.");
       onLoginSuccess(response);
     } catch (err) {
-      setError("Login failed. Check your username and password.");
+      // Prefer server-provided error detail when available
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const anyErr = err as any;
+      const serverMsg = anyErr?.response?.data?.detail ?? anyErr?.message;
+      setError(serverMsg ? String(serverMsg) : "Login failed. Check your username and password.");
       console.error("Login error:", err);
     } finally {
       setLoading(false);
@@ -51,7 +55,7 @@ export default function LoginPage({ onNavigateHome, onNavigateSignup, onLoginSuc
           justify-content: center;
           padding: 1.5rem;
           box-sizing: border-box;
-          font-family: "-apple-system";
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         .login-card {

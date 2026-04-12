@@ -89,7 +89,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
               style={{
                 fontSize: "3.5rem",
                 fontWeight: "bold",
-                fontFamily: "-apple-system",
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
                 color: "#000000",
               }}
             >
@@ -99,7 +99,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
           <span
             style={{
               fontSize: "0.95rem",
-              fontFamily: "-apple-system",
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
               color: "#666666",
             }}
           >
@@ -112,7 +112,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
           <h2
             style={{
               fontSize: "2rem",
-              fontFamily: "-apple-system",
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
               fontWeight: "bold",
               color:"#000000",
               margin: "0",
@@ -124,7 +124,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
           <div
             style={{
               fontSize: "0.75rem",
-              fontFamily: "-apple-system",
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
               fontWeight: "600",
               color: "#666666",
               letterSpacing: "0.05em",
@@ -136,7 +136,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
           <div
             style={{
               fontSize: "1rem",
-              fontFamily: "-apple-system",
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
               color: "#666666",
               marginBottom: "1.5rem",
             }}
@@ -147,7 +147,7 @@ export default function ClubCard({ club, onSelectClub }: ClubCardProps) {
           <div
             style={{
               fontSize: "1rem",
-              fontFamily: "-apple-system",
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
               color: "#666666",
               marginBottom: "1.5rem",
             }}
